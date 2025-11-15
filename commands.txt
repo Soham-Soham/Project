@@ -36,3 +36,17 @@ chmod +x xampp-linux-x64-8.2.4-0-installer.run
 sudo ./xampp-linux-x64-8.2.4-0-installer.run
 sudo /opt/lampp/lampp start
 sudo mv index.php /opt/lampp/htdocs/
+
+
+
+
+Django application
+git clone <project-url>
+cd <project-folder>
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+
+python manage.py migrate
+
+to run : python manage.py runserver
