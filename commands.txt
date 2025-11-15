@@ -1,0 +1,27 @@
+To open ssh-server in ubuntu
+
+sudo apt update
+sudo apt install openssh-server -y
+
+systemctl status ssh
+
+ip a
+
+
+
+Run Node application on ubuntu
+
+sudo apt update
+sudo apt install nodejs npm -y
+
+node -v
+npm -v
+
+If Node version is old (Ubuntu default is usually old), install the latest version:
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+nodejs application
+https://github.com/saadactin?tab=repositories
+
