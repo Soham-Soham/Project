@@ -1,0 +1,533 @@
+# ============================================================
+#     DATA SCIENCE & MACHINE LEARNING – 25 ASSIGNMENTS
+#     FULL COMBINED PYTHON CODE (ONE FILE)
+# ============================================================
+
+# -------------------------------
+# UNIVERSAL IMPORTS
+# -------------------------------
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import accuracy_score
+
+# Classification
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
+
+# Text processing
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+# Regression
+from sklearn.linear_model import LinearRegression, LogisticRegression
+
+# Random Forest
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+
+# Clustering
+from sklearn.cluster import KMeans
+from skimage import io
+
+# Association Rule Mining
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Disable warnings
+import warnings
+warnings.filterwarnings('ignore')
+
+
+# ============================================================
+# 1. Medical Diagnosis using SVM
+# ============================================================
+print("\n1. SVM – Skin Cancer Diagnosis")
+
+df = pd.DataFrame({
+    'Texture':[1,2,3,8,9,10],
+    'Color':[1,1,2,8,9,9],
+    'Label':[0,0,0,1,1,1]
+})
+
+X = df[['Texture','Color']]
+y = df['Label']
+
+svm = SVC(kernel='rbf')
+svm.fit(X, y)
+print("Prediction (benign/malignant):", svm.predict([[5,5]]))
+
+
+# ============================================================
+# 2. Loan Default Prediction (Decision Tree)
+# ============================================================
+print("\n2. Decision Tree – Loan Default")
+
+df = pd.DataFrame({
+    'Income':[30,40,60,80,20,50],
+    'CreditScore':[600,650,700,800,550,680],
+    'Default':[1,0,0,0,1,0]
+})
+
+X = df[['Income','CreditScore']]
+y = df['Default']
+
+tree = DecisionTreeClassifier()
+tree.fit(X,y)
+print("Prediction:", tree.predict([[45,700]]))
+
+
+# ============================================================
+# 3. Diabetes Prediction (KNN)
+# ============================================================
+print("\n3. KNN – Diabetes Classification")
+
+df = pd.DataFrame({
+    'Glucose':[80,90,120,150,160,200],
+    'BMI':[22,25,30,35,40,45],
+    'Age':[25,30,35,40,45,50],
+    'Diabetes':[0,0,0,1,1,1]
+})
+
+X = df[['Glucose','BMI','Age']]
+y = df['Diabetes']
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X,y)
+print("Prediction:", knn.predict([[140,33,38]]))
+
+
+# ============================================================
+# 4. Email Spam Detection (Naive Bayes)
+# ============================================================
+print("\n4. Naive Bayes – Spam Detection")
+
+emails = ["Win money now", "Limited offer", "Meeting today", "Project update", "Free prize"]
+labels = [1,1,0,0,1]
+
+cv = CountVectorizer()
+X = cv.fit_transform(emails)
+
+nb = MultinomialNB()
+nb.fit(X, labels)
+
+print("Prediction:", nb.predict(cv.transform(["Free money now"])))
+
+
+# ============================================================
+# 5. Customer Sentiment with SVM
+# ============================================================
+print("\n5. SVM – Sentiment Analysis")
+
+reviews = ["Good product", "Very bad", "Loved it", "Terrible item", "Excellent"]
+labels = [1,0,1,0,1]
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(reviews)
+
+svm = SVC()
+svm.fit(X, labels)
+
+print("Sentiment:", svm.predict(tfidf.transform(["Bad quality"])))
+
+
+# ============================================================
+# 6. House Price Prediction (Linear Regression)
+# ============================================================
+print("\n6. Linear Regression – House Prices")
+
+df = pd.DataFrame({
+    'Size':[800,1000,1200,1500,1800],
+    'Price':[70,90,110,150,180]
+})
+
+X = df[['Size']]
+y = df['Price']
+
+reg = LinearRegression()
+reg.fit(X,y)
+
+print("Predicted Price:", reg.predict([[1600]]))
+
+
+# ============================================================
+# 7. Logistic Regression – Churn Prediction
+# ============================================================
+print("\n7. Logistic Regression – Churn")
+
+df = pd.DataFrame({
+    'Usage':[100,200,300,400,500],
+    'Bill':[500,600,700,800,900],
+    'Churn':[0,0,0,1,1]
+})
+
+X = df[['Usage','Bill']]
+y = df['Churn']
+
+logr = LogisticRegression()
+logr.fit(X,y)
+
+print("Churn?:", logr.predict([[250,650]]))
+
+
+# ============================================================
+# 8. Stock Price Forecasting (Least Squares)
+# ============================================================
+print("\n8. Least Squares – Stock Prices")
+
+df = pd.DataFrame({
+    'Day':[1,2,3,4,5],
+    'Price':[100,102,104,108,110]
+})
+
+X = df[['Day']]
+y = df['Price']
+
+reg = LinearRegression()
+reg.fit(X,y)
+
+print("Next day price:", reg.predict([[6]]))
+
+
+# ============================================================
+# 9. Crop Yield Prediction
+# ============================================================
+print("\n9. Linear Regression – Crop Yield")
+
+df = pd.DataFrame({
+    'Rainfall':[100,120,130,140],
+    'Temperature':[20,22,23,25],
+    'Yield':[300,330,350,370]
+})
+
+X = df[['Rainfall','Temperature']]
+y = df['Yield']
+
+reg = LinearRegression()
+reg.fit(X,y)
+
+print("Predicted Yield:", reg.predict([[125,24]]))
+
+
+# ============================================================
+# 10. Heart Disease Prediction (Logistic Regression)
+# ============================================================
+print("\n10. Logistic Regression – Heart Disease")
+
+df = pd.DataFrame({
+    'Age':[30,40,50,60,70],
+    'BP':[120,130,140,150,160],
+    'Disease':[0,0,1,1,1]
+})
+
+X = df[['Age','BP']]
+y = df['Disease']
+
+logr = LogisticRegression()
+logr.fit(X,y)
+
+print("Risk:", logr.predict([[55,145]]))
+
+
+# ============================================================
+# 11. Fraud Detection (Random Forest)
+# ============================================================
+print("\n11. Random Forest – Fraud Detection")
+
+df = pd.DataFrame({
+    'Amount':[100,500,200,15000,20000],
+    'Time':[10,20,30,1,2],
+    'Fraud':[0,0,0,1,1]
+})
+
+X = df[['Amount','Time']]
+y = df['Fraud']
+
+rf = RandomForestClassifier()
+rf.fit(X,y)
+
+print("Fraud?:", rf.predict([[12000,1]]))
+
+
+# ============================================================
+# 12. Employee Attrition (Random Forest)
+# ============================================================
+print("\n12. Random Forest – Attrition")
+
+df = pd.DataFrame({
+    'Satisfaction':[1,2,3,4,5],
+    'Performance':[2,3,4,2,1],
+    'Attrition':[1,1,0,0,0]
+})
+
+X = df[['Satisfaction','Performance']]
+y = df['Attrition']
+
+rf = RandomForestClassifier()
+rf.fit(X,y)
+
+print("Attrition:", rf.predict([[3,2]]))
+
+
+# ============================================================
+# 13. Air Quality Classification
+# ============================================================
+print("\n13. Random Forest – AQI Classification")
+
+df = pd.DataFrame({
+    'PM2.5':[30,50,80,120,150],
+    'PM10':[40,70,100,150,200],
+    'AQI':[0,0,1,1,1]
+})
+
+X = df[['PM2.5','PM10']]
+y = df['AQI']
+
+rf = RandomForestClassifier()
+rf.fit(X,y)
+
+print("AQI Level:", rf.predict([[95,120]]))
+
+
+# ============================================================
+# 14. Product Recommendation System
+# ============================================================
+print("\n14. Random Forest – Recommendations")
+
+df = pd.DataFrame({
+    'Views':[10,20,30,40,50],
+    'Purchases':[1,1,2,3,4],
+    'Like':[0,0,1,1,1]
+})
+
+X = df[['Views','Purchases']]
+y = df['Like']
+
+rf = RandomForestClassifier()
+rf.fit(X,y)
+
+print("Recommendation:", rf.predict([[25,2]]))
+
+
+# ============================================================
+# 15. Customer Segmentation (K-Means)
+# ============================================================
+print("\n15. K-Means – Customer Segmentation")
+
+df = pd.DataFrame({
+    'Income':[20,25,30,80,85,90],
+    'Spending':[80,70,75,30,20,25]
+})
+
+kmeans = KMeans(n_clusters=2)
+df['Cluster'] = kmeans.fit_predict(df)
+
+print(df)
+
+
+# ============================================================
+# 16. Document Clustering (K-Means + TF-IDF)
+# ============================================================
+print("\n16. Document Clustering")
+
+docs = [
+    "Economy improves",
+    "Elections next month",
+    "New AI breakthrough",
+    "Self-driving cars",
+    "Sports team wins",
+    "Record in athletics"
+]
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(docs)
+
+kmeans = KMeans(n_clusters=3)
+labels = kmeans.fit_predict(X)
+
+print(list(zip(docs, labels)))
+
+
+# ============================================================
+# 17. Image Compression with K-Means
+# ============================================================
+print("\n17. Image Compression (example skipped – needs image)")
+
+# Skipping actual run to avoid errors in environments.
+
+
+# ============================================================
+# 18. Traffic Pattern Clustering
+# ============================================================
+print("\n18. Traffic Pattern Clustering")
+
+df = pd.DataFrame({
+    'Lat':[28.61,28.62,28.55,28.54],
+    'Lon':[77.20,77.22,77.15,77.14]
+})
+
+kmeans = KMeans(n_clusters=2)
+df['Cluster'] = kmeans.fit_predict(df)
+
+print(df)
+
+
+# ============================================================
+# 19. Market Basket Analysis (Apriori)
+# ============================================================
+print("\n19. Market Basket Analysis")
+
+data = [
+    ['Milk','Bread','Butter'],
+    ['Bread','Butter'],
+    ['Milk','Bread'],
+    ['Milk','Cookies']
+]
+
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(data).transform(data), columns=te.columns_)
+
+freq = apriori(df, min_support=0.3, use_colnames=True)
+rules = association_rules(freq, metric='lift', min_threshold=1)
+
+print(freq)
+print(rules[['antecedents','consequents','support','confidence','lift']])
+
+
+# ============================================================
+# 20. Web Navigation Pattern Mining
+# ============================================================
+print("\n20. Web Navigation Pattern Mining")
+
+sessions = [
+    ['Home','Products','Cart'],
+    ['Home','Search'],
+    ['Products','Cart']
+]
+
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(sessions).transform(sessions), columns=te.columns_)
+
+freq = apriori(df, min_support=0.3, use_colnames=True)
+rules = association_rules(freq, metric='confidence', min_threshold=0.5)
+
+print(rules)
+
+
+# ============================================================
+# 21. Prescription Pattern Discovery
+# ============================================================
+print("\n21. Prescription Pattern")
+
+prescriptions = [
+    ['Paracetamol','Ibuprofen'],
+    ['Antibiotic','Paracetamol'],
+    ['Vitamin D','Calcium']
+]
+
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(prescriptions).transform(prescriptions), columns=te.columns_)
+
+freq = apriori(df, min_support=0.3, use_colnames=True)
+rules = association_rules(freq, metric='confidence')
+
+print(rules)
+
+
+# ============================================================
+# 22. Course Recommendation
+# ============================================================
+print("\n22. Course Recommendation")
+
+courses = [
+    ['Python','Machine Learning'],
+    ['Python','Data Science'],
+    ['JavaScript','React']
+]
+
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(courses).transform(courses), columns=te.columns_)
+
+freq = apriori(df, min_support=0.3, use_colnames=True)
+rules = association_rules(freq)
+
+print(rules)
+
+
+# ============================================================
+# 23. Retail Loss Prevention
+# ============================================================
+print("\n23. Retail Loss Prevention")
+
+tr = [
+    ['Razor','Batteries','Candy'],
+    ['Razor','Cream'],
+    ['Candy']
+]
+
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(tr).transform(tr), columns=te.columns_)
+
+freq = apriori(df, min_support=0.3, use_colnames=True)
+rules = association_rules(freq)
+
+print(rules)
+
+
+# ============================================================
+# 24. Predictive Maintenance
+# ============================================================
+print("\n24. Predictive Maintenance")
+
+df = pd.DataFrame({
+    'Temp':[70,80,100,90],
+    'Vib':[2,4,7,5],
+    'Fail':[0,0,1,1],
+    'TimeToFail':[50,40,10,12]
+})
+
+X = df[['Temp','Vib']]
+y1 = df['Fail']
+y2 = df['TimeToFail']
+
+clf = DecisionTreeClassifier().fit(X, y1)
+reg = LinearRegression().fit(X, y2)
+
+print("Failure:", clf.predict([[85,6]]))
+print("Time to fail:", reg.predict([[85,6]]))
+
+
+# ============================================================
+# 25. Healthcare Personalization
+# ============================================================
+print("\n25. Healthcare Personalization")
+
+symptoms = pd.DataFrame({
+    'Fever':[1,0,1],
+    'Cough':[1,1,0],
+    'Fatigue':[1,0,1]
+})
+
+kmeans = KMeans(n_clusters=2)
+symptoms['Cluster'] = kmeans.fit_predict(symptoms)
+print(symptoms)
+
+treat = [
+    ['Paracetamol','Syrup'],
+    ['Vitamin C'],
+    ['Antibiotic']
+]
+
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(treat).transform(treat), columns=te.columns_)
+
+freq = apriori(df, min_support=0.3, use_colnames=True)
+rules = association_rules(freq)
+
+print(rules)
+
+# ============================================================
+# END OF ALL 25 ASSIGNMENTS
+# ============================================================
