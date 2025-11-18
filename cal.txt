@@ -1,0 +1,133 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(CalculatorApp());
+}
+
+class CalculatorApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CalculatorScreen(),
+    );
+  }
+}
+
+class CalculatorScreen extends StatefulWidget {
+  @override
+  _CalculatorScreenState createState() => _CalculatorScreenState();
+}
+
+class _CalculatorScreenState extends State<CalculatorScreen> {
+  String input = "";
+  String result = "";
+
+  void buttonPress(String value) {
+    setState(() {
+      if (value == "C") {
+        input = "";
+        result = "";
+      } else if (value == "=") {
+        try {
+          result = _calculate(input).toString();
+        } catch (e) {
+          result = "Error";
+        }
+      } else {
+        input += value;
+      }
+    });
+  }
+
+  // Very simple calculator logic (no operator precedence)
+  double _calculate(String exp) {
+    List<String> tokens = exp.split(RegExp(r'([+\-*/])')).where((e) => e.isNotEmpty).toList();
+    List<String> ops = exp.split(RegExp(r'[0-9.]')).where((e) => e.isNotEmpty).toList();
+
+    double res = double.parse(tokens[0]);
+
+    for (int i = 0; i < ops.length; i++) {
+      double n = double.parse(tokens[i + 1]);
+      switch (ops[i]) {
+        case '+':
+          res += n;
+          break;
+        case '-':
+          res -= n;
+          break;
+        case '*':
+          res *= n;
+          break;
+        case '/':
+          res /= n;
+          break;
+      }
+    }
+
+    return res;
+  }
+
+  Widget button(String text, {Color color = Colors.black54}) {
+    return ElevatedButton(
+      onPressed: () => buttonPress(text),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.all(22),
+        backgroundColor: Colors.grey[200],
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 25, color: color),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> buttons = [
+      "7","8","9","/",
+      "4","5","6","*",
+      "1","2","3","-",
+      "C","0","=","+",
+    ];
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(20),
+              alignment: Alignment.bottomRight,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(input, style: TextStyle(fontSize: 32, color: Colors.black87)),
+                  SizedBox(height: 10),
+                  Text(result, style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ),
+
+          // Buttons
+          Expanded(
+            flex: 2,
+            child: GridView.builder(
+              itemCount: buttons.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+              itemBuilder: (context, index) {
+                String text = buttons[index];
+                Color color = (text == "=" || text == "C") ? Colors.red : Colors.black;
+
+                return button(text, color: color);
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
